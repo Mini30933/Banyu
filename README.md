@@ -1,153 +1,58 @@
-# 肉包 Roubao 2.0 for iPhone · iPhone AI Agent
+<div align="center">
 
-**让 AI 直接操作你的 iPhone：看屏幕、点按、输入、跨应用完成任务，支持在用户授权下操作微 x。**
+<img src="docs/icon.png" width="120" alt="伴语图标">
 
-**运行时无需 Wi-Fi、无需越狱、无需电脑、无需额外硬件。支持纯蜂窝网络，在 iPhone 上独立运行 Agent。**
+# 伴语 Banyu
 
-[English](README_EN.md) · [Android 旧版在下方](#android) · [详细安装教程](ios/docs/INSTALL.md) · [使用指南](ios/docs/USAGE.md) · [验证与限制](ios/docs/VALIDATION.md) · [架构](ios/docs/ARCHITECTURE.md)
+**让喜欢的角色住进你的手机 —— 能陪你聊天，还能替你操作手机的 Android AI 伴侣**
 
-![iOS 26+](https://img.shields.io/badge/iOS-26%2B-black)
-![Swift and Rust](https://img.shields.io/badge/Swift%20%2B%20Rust-orange)
-[![AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue)](ios/LICENSE)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Platform](https://img.shields.io/badge/platform-Android%208.0%2B-blue)
+![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack%20Compose-purple)
 
-> **首次配置仍需 Mac + USB**：编译签名、安装、开启开发者模式、生成并导入本机配对文件。配置完成后，Mac 可以关机、USB 可以拔掉。签名到期或配对失效时需要维护。“独立运行”指任务循环和手机控制在本机，模型推理使用你配置的联网 API，**不代表离线大模型**。当前发布为开发者源码预览版。
+</div>
 
-## 真机演示（3× 速度）
+## 这是什么
 
-[![肉包 2.0 for iPhone 真机演示：应用检索、PDF 报告与原生分享](https://img.youtube.com/vi/H0GKo_TD2i4/hqdefault.jpg)](https://www.youtube.com/watch?v=H0GKo_TD2i4)
+伴语是一款聊天优先的 AI 伴侣应用：你给它写一段「角色设定」，它就以这个角色的身份和你日常聊天；当你需要它动手时，它还能接管手机，替你打开应用、点按、输入、刷页面 —— 角色扮演和手机操控长在同一个应用里。
 
-**[▶ 在 YouTube 观看完整演示](https://www.youtube.com/watch?v=H0GKo_TD2i4)** · 约 1 分 18 秒 · 英文字幕与背景音乐
+它基于开源项目 [roubao（肉包）](https://github.com/Turbo1123/roubao) 二次开发，保留了其 VLM 手机操控内核，并在此之上重做了交互形态和感知方式。
 
-真实 iPhone 上的应用资料查询、PDF 报告与原生分享流程；保留完整操作顺序，以 **3× 速度**展示。点击封面即可观看视频。
+## 功能亮点
 
-## 平台版本与入口
+- **角色扮演对话**：DeepSeek 风格的聊天界面是首页；系统提示词即「角色设定」，想让谁陪你聊、用什么语气，都由你写
+- **多会话侧边栏**：会话可搜索、置顶、重命名、分组（置顶/今天/昨天/7天内/更早）、多选批量删除，标题自动生成
+- **对话中直接操控手机**：角色在回复里发出控制标记即可执行任务（打开抖音、发消息、查东西……），执行结果会回到对话里继续聊
+- **三种控制方式**（任选其一即可）：
+  - **Shizuku**：经典方案，权限完整
+  - **无障碍**：免 Shizuku，系统无障碍服务直接操控
+  - **ADB 无线调试**：应用自连接手机的无线调试（libadb-android），无需电脑
+- **元素树感知**：操控时优先把无障碍 UI 元素树（带索引）发给模型，按元素直达点击，不再靠猜截图坐标；坐标路径作为游戏/网页等场景的兜底
+- **长期记忆**：跨会话记住偏好、关系进展和重要事件；记忆达到 8000 字时自动由模型压缩 —— 最新 10% 保留原文，其余浓缩成摘要，不丢关键信息
+- **够长的陪伴**：单任务最多 300 步，单次回复 max_tokens 8192，长对话不怕被截断
+- **Swarm 启动动画**：冷启动时 20 只彩色小光标在屏幕上协作、打字、发送，再汇成标志 —— 只播一次，点一下就跳过
 
-| 平台 | 状态 | 源码与文档 | 许可 |
-|---|---|---|---|
-| **iPhone · 肉包 2.0** | 当前开发者预览版 | [iOS 源码](ios/) · [安装教程](ios/docs/INSTALL.md) · [使用指南](ios/docs/USAGE.md) | [AGPL-3.0](ios/LICENSE) |
-| **Android · 旧版** | 暂未更新，保留历史版本 | 根目录 `app/` · [旧版中文文档](docs/ANDROID.md) · [Android V1.4.2](https://github.com/Turbo1123/roubao/releases/tag/V1.4.2) | [MIT](LICENSE) |
+## 快速开始
 
-以下内容主要介绍 **肉包 2.0 for iPhone**。Android 代码与原有构建目录保留；iPhone 2.0 的能力不代表安卓版已更新。[分平台许可说明](LICENSING.md)
+1. **下载安装**：到 [Releases](https://github.com/Mini30933/Banyu/releases) 下载最新 APK 安装（Android 8.0+）
+2. **配置模型**：打开「设置」，填入任意 OpenAI 兼容接口的地址、API Key 和模型名（需要支持看图的视觉模型才能操控手机），可一键拉取模型列表
+3. **选一种控制方式**：
+   - Shizuku：按应用内指引发起授权
+   - 无障碍：到系统设置里开启「伴语」无障碍服务
+   - ADB：开发者选项 → 无线调试 → 用配对码配对，把端口和配对码填进设置页的 ADB 卡片
+4. **写角色设定**：在设置里写下你想要的角色和说话方式，回到对话页开始聊天
 
-## 把“AI 手机”的跨应用能力带到 iPhone
+## 技术栈
 
-**不必换手机：自选模型、微 x操作、任务续聊、PDF 报告，把 AI 手机的操作体验带到你现有的 iPhone。**
+Kotlin · Jetpack Compose / Material 3 · OkHttp · Shizuku · libadb-android · BouncyCastle
 
-你说目标，肉包观察实际页面，规划并执行步骤；需要你选择或授权时发通知、出卡片，收到回答后继续。可以把它理解为把类似“豆包手机”的 AI 操作体验带到现有 iPhone，无需更换手机或外接控制板。本项目与豆包、字节跳动及 Apple 无官方关联，不承诺功能等同。
+## 致谢与许可
 
-肉包 2.0 是 **open-source iPhone AI agent / iOS automation / phone-use harness**，基于 [iphone-use-app](https://github.com/EliotAndres/iphone-use-app) 扩展，保留上游贡献和 AGPL-3.0 许可。Android 旧版保留在本仓库根目录；新版 iOS 源码位于 `ios/`。
-
-## 能做什么
-
-| 能力 | 使用方式 |
-|---|---|
-| 跨应用操作 | 启动应用、截图、点按、长按、滑动、中文/英文/Emoji 输入、返回主屏幕 |
-| **微 x控制（实验性）** | 用户授权下操作微 x界面与分享文件；已有生成的 PDF 在指定聊天中实际发送的开发验证 |
-| 搜索与整理 | 查询地图地点、查商品页面、整理不同应用里的可见信息 |
-| 比价与 PDF | 比较指定平台的同款商品、配置、可见价格及优惠条件，生成带表格/截图的报告 |
-| 完成后继续聊 | “把刚才报告缩成两页”“补一个平台”；保留本会话历史、文件和已完成工作 |
-| 用户参与决策 | 一次一张问题卡，可返回修改，最后统一提交；等待时发送本地通知 |
-| 长任务与恢复 | 默认 100 步，到达后询问是否加 50 步；检查点和继续任务保留进度 |
-| 动态岛进度 | 查看阶段和步骤、随时停止；刷新频率由 iOS 决定 |
-| 文件与分享 | 原生 PDF、文件列表、QuickLook 预览及关闭、iOS 系统分享面板；报告可继续修改 |
-| 流式语音输入 | 可选豆包/火山引擎 ASR，边说边显示，结束后先手动改再发送 |
-| 自选模型 | 手机内填写兼容接口 Base URL、Key、模型 ID；可选 TypeSafe JEV 加速执行 |
-| 卡住时主模型接管 | 本地 OCR 辅助定位，两次定位无进展/失败后要求主模型多模态重新定位 |
-
-上述是实现能力，**不是每项业务都经过完整验收**。已有计算器、信息查询、比价 PDF、语音等开发验证；不保证无人值守发送、下单和支付可靠。[验证范围与已知问题](ios/docs/VALIDATION.md)
-
-## 微 x也能协助操作
-
-肉包支持在你授权的情况下操作微 x界面，使用通用截图、点击、输入及系统分享通道；已有将生成的 PDF 发到指定聊天中的真机开发记录。你可以让它：“把刚才的 PDF 分享到我指定的微 x聊天，发送前让我核对接收人与文件。”
-
-微 x能力仍处于实验验证阶段，发送前请核对联系人、文件和内容。历史测试出现过重复发送及误点，已补充通用授权与重复动作保护，但修复后尚未重新完成完整发送验收；不承诺所有微 x页面或无人值守发送可靠。具体记录见 [验证范围与已知问题](ios/docs/VALIDATION.md)。不绕过微 x登录、验证或系统授权。
-
-## 要安装 WDA 吗？
-
-**不用。当前版本不依赖 WebDriverAgent、Appium 或 XCTest runner。**
-
-控制路径：`AgentRunKit → CoreDevice / RemoteXPC → idevice → 本机回环 VPN`。需要开发者模式、本机 Remote Pairing 文件和本地 VPN；不需要 ESP32、树莓派或另一台手机。[技术说明](ios/docs/ARCHITECTURE.md)
-
-## 从零开始安装
-
-完整可复制步骤见 **[中文安装教程](ios/docs/INSTALL.md)**：
-
-1. 准备 iOS 26+ iPhone、Mac、支持该系统的完整 Xcode、Rust 和模型 API。开发验证设备为 iPhone 15/17 Pro Max、iOS 27.0.1；iOS 26 是工程最低版本，未覆盖所有组合。
-2. USB 连接、解锁并“信任此电脑”；**设置 → 隐私与安全性 → 开发者模式**，开启、重启、确认。找不到开关时先让 Xcode 识别设备。
-3. 克隆源码，运行 `scripts/build-idevice.sh`；Xcode 配置自己的团队及唯一 Bundle ID。
-4. **有 Network Extension 权限的付费团队**使用内置 VPN；**免费 Personal Team** 设置 `BUILTIN_VPN=NO`，另装并启用 [LocalDevVPN](https://apps.apple.com/app/localdevvpn/id6755608044)。免费签名通常 7 天到期。
-5. 构建安装肉包，经 USB 生成并导入这台手机自己的配对文件。**它包含私密信任信息，不可共享或借用。**
-6. 允许 VPN、本地网络等权限；等待首次 Developer Disk Image（DDI）下载并挂载。
-7. 纯蜂窝场景在肉包内添加 **“[iPhone Use] Toggle Cellular”** 快捷指令，再点“已添加助手，一键连接”。它短暂关闭蜂窝以建立本机通道，然后恢复；**不要求连接 Wi-Fi**。
-8. 配置并测试模型。先执行“打开计算器，清空后计算 23×17，读取结果”，应得到 **391**。
-9. 拔 USB、关 Mac，保持手机解锁和联网再跑任务，验证自己的独立运行和纯蜂窝重连。
-
-## 任务示例
-
-```text
-打开计算器，清空后计算 23×17，读取结果。
-在地图查询附近三家咖啡店，整理距离和营业信息，先不要下单。
-在指定的三个电商平台比较同型号、同容量的手机，记录价格条件和截图，生成 PDF。
-继续刚才的报告，标注哪些价格需要会员或优惠券，另存新版。
-把刚才的 PDF 分享到我指定的微 x聊天，发送前让我核对接收人与文件。
-```
-
-地点、账号、地址等缺失选择由肉包向你询问。发送或购买等最终操作请核对目标和内容；不要用真实支付做首次测试。
-
-## 构建与开发
-
-```sh
-git clone https://github.com/Turbo1123/roubao.git
-cd roubao/ios
-rustup target add aarch64-apple-ios
-scripts/build-idevice.sh
-open iPhoneUse.xcodeproj
-# 离线 harness / 协议测试，不使用 API Key、不操作手机
-swift test --scratch-path .build/ModelTests
-```
-
-Xcode 工程、target 和 module 沿用 `iPhoneUse`。设置 `ROUBAO_BUNDLE_ID` 可统一修改主应用和两个扩展标识。签名、配对、免费团队、命令行安装、未签名 IPA 和排错见 [INSTALL.md](ios/docs/INSTALL.md)。仓库不提供开发者的证书、账号、Key 或配对记录。
-
-## 隐私和边界
-
-- Key 保存在设备钥匙串；你选择的模型服务会收到任务文本、截图和相关上下文。开启 JEV/ASR 后，相应服务也接收其所需数据。
-- 对话、截图、检查点和报告保存在应用沙盒，分享前检查私人内容。“沙盒”指 iOS 应用存储，不是任意代码执行平台。
-- 本地 VPN 与其他 VPN 不能保证同时工作；系统可能显示“从 Mac 远程查看”开发服务提示，即使控制端就是本机。
-- 需要手机解锁；后台限制、签名到期、系统升级、应用改版可能中断运行。恢复不保证外部动作恰好执行一次，状态不明确时应先核对页面。
-- 不绕过登录、验证码、付款验证和系统授权。审批及重复动作保护尚未证明覆盖所有业务按钮，重要操作请在旁确认。
-
-[安全说明](ios/SECURITY.md) · [参与贡献](ios/CONTRIBUTING.md) · [第三方致谢](ios/THIRD_PARTY_NOTICES.md)
-
-## 开源与致谢
-
-延续上游 **[AGPL-3.0](ios/LICENSE)**，保留原作者及第三方许可。感谢 iphone-use-app、idevice、StikDebug、LocalDevVPN/StosVPN、AgentRunKit、SwiftOpenAI，以及 ESP32 iPhone Agent、JEV 社区。[上游历史文档](ios/docs/upstream/README.md)中的演示素材属于上游，不代表肉包 2.0 的验收。
-
-搜索主题：**iPhone AI Agent、iOS 自动化、手机智能体、非越狱 iPhone、蜂窝网络 Agent、手机端 harness、computer use、phone use、mobile AI agent、no-jailbreak iOS automation、standalone iPhone agent、on-device orchestration**。
+- 基于 [Turbo1123/roubao](https://github.com/Turbo1123/roubao)（MIT）二次开发，感谢原作者的开源工作；元素树感知的思路借鉴了 dsh-go 与 droidrun/mobilerun 的公开实践（仅思路，未复制代码）
+- 本项目同样以 [MIT](LICENSE) 许可发布
 
 ---
 
-<a id="android"></a>
+## English (brief)
 
-## Android 旧版：继续保留，暂未更新
-
-**安卓没有删除，也没有并入 iPhone 版。** 原有 Kotlin 源码、Gradle 工程、MIT 许可和 APK 历史版本都保留在本仓库；当前 iPhone 2.0 的更新不代表安卓版同步升级。
-
-**[下载 Android V1.4.2 APK](https://github.com/Turbo1123/roubao/releases/tag/V1.4.2)** · [Android 完整文档](docs/ANDROID.md) · [Android English guide](docs/ANDROID_EN.md) · [Android 源码](app/) · [MIT 许可](LICENSE)
-
-### 安卓版能做什么
-
-- 原生 Kotlin + Material 3 界面，中英文界面与深浅色主题。
-- 通过视觉语言模型观察屏幕，使用自然语言发起手机操作任务。
-- 基于 Shizuku 的截图、点击、滑动、输入和应用启动。
-- 多 Agent / Tools / Skills 架构，执行记录与悬浮进度，可手动停止。
-- 自定义模型接口和模型配置；Key 由用户自行提供。旧版已有配置加密与敏感页面检测设计，具体兼容性和执行效果仍以实测为准。
-
-### 安卓安装与使用
-
-1. 准备 **Android 8.0 / API 26 及以上**手机和自己的视觉模型 API。
-2. 安装并启动 [Shizuku](https://github.com/RikkaApps/Shizuku/releases)。Android 11+ 可使用无线调试，旧版教程的无线方式需要 Wi-Fi；也可以按 Shizuku 官方说明通过电脑 ADB 启动。
-3. 下载上面的 **Android V1.4.2 APK** 并安装，不要把 iPhone 源码包当成安卓安装包。
-4. 打开肉包，在 Shizuku 中授予应用权限；进入设置填写自己的模型接口、模型 ID 和 API Key。
-5. 先跑简单任务，核对每一步实际结果，再尝试复杂流程。更多权限、配置、构建与旧版示例见 [Android 完整文档](docs/ANDROID.md)。
-
-“运行时四无需”、CoreDevice、本机 VPN、动态岛等上文说明针对 **iPhone 版**；安卓按照本节及旧版文档配置。旧的个人演示截图已因隐私清理移除，不影响 APK、源码或文档入口。
+**Banyu** is a chat-first Android AI companion: give it a persona ("character setting") and it chats with you in character — and when you ask, it takes over the phone and operates apps for you. Features multi-session chat with a DeepSeek-style UI, three control backends (Shizuku / Accessibility / ADB wireless debugging), accessibility-tree perception with index-based element actions, and long-term memory with model-based compression (at 8,000 chars: newest 10% verbatim + summarized digest). Based on the MIT-licensed [roubao](https://github.com/Turbo1123/roubao) project. Grab the APK from [Releases](https://github.com/Mini30933/Banyu/releases).
