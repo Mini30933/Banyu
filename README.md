@@ -10,6 +10,8 @@
 ![Platform](https://img.shields.io/badge/platform-Android%208.0%2B-blue)
 ![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack%20Compose-purple)
 
+📮 **联系作者**：[Mini30933@qq.com](mailto:Mini30933@qq.com) —— 使用问题、建议、合作都欢迎来信
+
 </div>
 
 ## 这是什么
@@ -55,4 +57,4 @@ Kotlin · Jetpack Compose / Material 3 · OkHttp · Shizuku · libadb-android ·
 
 ## English (brief)
 
-**Banyu** is a chat-first Android AI companion: give it a persona ("character setting") and it chats with you in character — and when you ask, it takes over the phone and operates apps for you. Features multi-session chat with a DeepSeek-style UI, three control backends (Shizuku / Accessibility / ADB wireless debugging), accessibility-tree perception with index-based element actions, and long-term memory with model-based compression (at 8,000 chars: newest 10% verbatim + summarized digest). Based on the MIT-licensed [roubao](https://github.com/Turbo1123/roubao) project. Grab the APK from [Releases](https://github.com/Mini30933/Banyu/releases).
+**Banyu** is a chat-first Android AI companion: give it a persona ("character setting") and it chats with you in character — and when you ask, it takes over the phone and operates apps for you. Features multi-session chat with a DeepSeek-style UI, three control backends (Shizuku / Accessibility / ADB wireless debugging), accessibility-tree perception with index-based element actions, and long-term memory with model-based compression (at 8,000 chars: newest 10% verbatim + summarized digest). Based on the MIT-licensed [roubao](https://github.com/Turbo1123/roubao) project. Grab the APK from [Releases](https://github.com/Mini30933/Banyu/releases). Contact the author: Mini30933@qq.com.
